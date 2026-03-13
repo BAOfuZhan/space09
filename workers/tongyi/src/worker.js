@@ -49,6 +49,14 @@ function beijingHHMM() {
   return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
 }
 
+function beijingDate() {
+  const d = beijingNow();
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 function beijingDayOfWeek() {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   return days[beijingNow().getUTCDay()];
@@ -421,6 +429,7 @@ async function dispatchUsersInBatches(env, school, users) {
     const payload = {
       school_id: school.id,
       school_name: school.name,
+      trigger_date: beijingDate(),
       batch_index: i + 1,
       batch_total: batches.length,
       users: batches[i].map(u => ({
@@ -652,6 +661,7 @@ async function handleAPI(request, env, path) {
       username: user.phone || user.username,
       password: user.password,
       remark: user.remark || user.username || user.phone,
+      trigger_date: beijingDate(),
       slots: activeSlots.map(s => ({
         roomid: s.roomid,
         seatid: (s.seatid || "").split(",").map(x => x.trim()).filter(Boolean),
